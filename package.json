@@ -1,17 +1,16 @@
 {
-  "name": "recursion-mcp",
+  "name": "recursion-mcp-v2",
   "version": "1.0.2",
-  "description": "Recursive Language Model MCP server for unbounded document processing with local RAG",
+  "description": "MCP server for navigation-enabled recursive document analysis - works offline with no external APIs",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "recursion-mcp": "dist/cli.js",
     "recursion-mcp-v2": "dist/cli-v2.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/cli.js",
+    "start": "node dist/cli-v2.js",
     "start:v2": "node dist/cli-v2.js",
     "prepare": "npm run build",
     "postinstall": "node scripts/postinstall.js || echo 'Post-install setup skipped'",
@@ -20,38 +19,35 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "rlm",
-    "recursive-llm",
-    "rag",
+    "document-analysis",
     "document-processing",
-    "knowledge-graph",
-    "sqlite-vec",
-    "ollama"
+    "navigation",
+    "recursive-analysis"
   ],
   "author": "netflypsb",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/netflypsb/recursion-npx.git"
+    "url": "https://github.com/netflypsb/recursion-npx-v2.git"
   },
   "bugs": {
-    "url": "https://github.com/netflypsb/recursion-npx/issues"
+    "url": "https://github.com/netflypsb/recursion-npx-v2/issues"
   },
-  "homepage": "https://github.com/netflypsb/recursion-npx#readme",
+  "homepage": "https://github.com/netflypsb/recursion-npx-v2#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "better-sqlite3": "^11.0.0",
-    "sqlite-vec": "^0.1.0",
-    "pdf-parse": "^1.1.1",
     "mammoth": "^1.6.0",
-    "xlsx": "^0.18.5",
-    "uuid": "^9.0.0"
+    "pdf-parse": "^1.1.1",
+    "sqlite-vec": "^0.1.0",
+    "uuid": "^9.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
     "@types/better-sqlite3": "^7.6.10",
-    "@types/uuid": "^9.0.0",
+    "@types/node": "^20.0.0",
     "@types/pdf-parse": "^1.1.4",
+    "@types/uuid": "^9.0.0",
     "typescript": "^5.3.0"
   },
   "engines": {

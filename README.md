@@ -1,6 +1,6 @@
 # Recursion MCP V2
 
-[![npm version](https://img.shields.io/npm/v/recursion-mcp)](https://www.npmjs.com/package/recursion-mcp)
+[![npm version](https://img.shields.io/npm/v/recursion-mcp-v2)](https://www.npmjs.com/package/recursion-mcp-v2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An NPX-installable MCP (Model Context Protocol) server for **navigation-enabled recursive document analysis**. Works entirely offline with no external APIs required.
@@ -18,10 +18,10 @@ An NPX-installable MCP (Model Context Protocol) server for **navigation-enabled 
 
 ```bash
 # Run via NPX (no install needed)
-npx recursion-mcp recursion-mcp-v2
+npx recursion-mcp-v2
 
 # Or install globally
-npm install -g recursion-mcp
+npm install -g recursion-mcp-v2
 
 # Run V2
 recursion-mcp-v2
@@ -33,25 +33,25 @@ recursion-mcp-v2
 
 ```bash
 # Install globally
-npm install -g recursion-mcp
+npm install -g recursion-mcp-v2
 
 # Uninstall globally
-npm uninstall -g recursion-mcp
+npm uninstall -g recursion-mcp-v2
 
 # Check if installed globally
-npm list -g recursion-mcp
+npm list -g recursion-mcp-v2
 
 # Check local project installation
-npm list recursion-mcp
+npm list recursion-mcp-v2
 
 # View package info (version, dependencies, etc.)
-npm info recursion-mcp
+npm info recursion-mcp-v2
 
 # View latest version available
-npm view recursion-mcp version
+npm view recursion-mcp-v2 version
 
 # Update to latest version
-npm update -g recursion-mcp
+npm update -g recursion-mcp-v2
 ```
 
 ### MCP Configuration Cleanup
@@ -70,10 +70,10 @@ After installation, verify it's working:
 
 ```bash
 # Check if package is installed
-npm view recursion-mcp version
+npm view recursion-mcp-v2 version
 
 # Test V2 server
-npx recursion-mcp recursion-mcp-v2 --help
+npx recursion-mcp-v2 --help
 recursion-mcp-v2 --help
 ```
 
@@ -89,7 +89,7 @@ If automatic IDE configuration doesn't work, copy this prompt for your AI assist
 >   "mcpServers": {
 >     "recursion-v2": {
 >       "command": "npx",
->       "args": ["recursion-mcp", "recursion-mcp-v2"]
+>       "args": ["recursion-mcp-v2"]
 >     }
 >   }
 > }
@@ -101,7 +101,7 @@ Or with absolute paths for global install:
 >   "mcpServers": {
 >     "recursion-v2": {
 >       "command": "node",
->       "args": ["C:/Users/YOUR_USERNAME/AppData/Roaming/npm/node_modules/recursion-mcp/dist/cli-v2.js"]
+>       "args": ["C:/Users/YOUR_USERNAME/AppData/Roaming/npm/node_modules/recursion-mcp-v2/dist/cli-v2.js"]
 >     }
 >   }
 > }
@@ -112,13 +112,13 @@ Or with absolute paths for global install:
 ### Via NPX (recommended)
 
 ```bash
-npx recursion-mcp recursion-mcp-v2
+npx recursion-mcp-v2
 ```
 
 ### Global Install
 
 ```bash
-npm install -g recursion-mcp
+npm install -g recursion-mcp-v2
 
 # Run V2
 recursion-mcp-v2
@@ -141,7 +141,7 @@ When you install globally, the package automatically configures MCP for detected
 
 ```bash
 # Run setup manually
-npm run setup --prefix $(npm root -g)/recursion-mcp
+npm run setup --prefix $(npm root -g)/recursion-mcp-v2
 ```
 
 Or manually add to your IDE's MCP settings (see MCP Configuration section above).
@@ -159,7 +159,7 @@ Or manually add to your IDE's MCP settings (see MCP Configuration section above)
   "mcpServers": {
     "recursion-v2": {
       "command": "npx",
-      "args": ["recursion-mcp", "recursion-mcp-v2"]
+      "args": ["recursion-mcp-v2"]
     }
   }
 }
@@ -270,6 +270,6 @@ MIT © netflypsb
 ## Links
 
 - [GitHub Repository](https://github.com/netflypsb/recursion-npx-v2)
-- [NPM Package](https://www.npmjs.com/package/recursion-mcp)
+- [NPM Package](https://www.npmjs.com/package/recursion-mcp-v2)
 - [Issues](https://github.com/netflypsb/recursion-npx-v2/issues)
 
