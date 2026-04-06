@@ -1,0 +1,42 @@
+# Source files (not needed in published package)
+src/
+tsconfig.json
+*.ts
+
+# Development files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data and temporary files
+.kw-os/
+tmp/
+temp/
+*.tmp
+*.db
+*.sqlite
+*.sqlite3
+
+# Documentation and examples (README.md is included via files array)
+docs/
+examples/
+
+# CI/CD
+.github/
+.travis.yml
+.gitlab-ci.yml
