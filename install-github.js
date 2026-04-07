@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 /**
- * Post-install script to automatically configure MCP for common IDEs
- * Runs after npm install -g recursion-mcp
+ * GitHub Install Script for Recursion MCP V2
+ * 
+ * This script:
+ * 1. Clones the repo from GitHub (if not already present)
+ * 2. Installs dependencies
+ * 3. Builds the TypeScript
+ * 4. Auto-configures MCP for detected IDEs
+ * 
+ * Usage:
+ *   curl -fsSL https://raw.githubusercontent.com/netflypsb/recursion-npx-v2/main/install-github.js | node
+ *   # or
+ *   node install-github.js
  */
 
 import { execSync } from 'child_process';
@@ -10,63 +20,81 @@ import * as path from 'path';
 import * as os from 'os';
 
 const isWindows = os.platform() === 'win32';
+const REPO_URL = 'https://github.com/netflypsb/recursion-npx-v2.git';
+const DEFAULT_INSTALL_DIR = path.join(os.homedir(), '.local', 'share', 'recursion-mcp-v2');
 
-// Detect package installation path
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-const cliPath = path.join(__dirname, '..', 'dist', 'cli.js');
-const cliV2Path = path.join(__dirname, '..', 'dist', 'cli-v2.js');
+console.log('🔧 Recursion MCP V2 - GitHub Installer\n');
 
-console.log('🔧 Recursion MCP Post-Install Setup\n');
+// Get install directory from env or use default
+const INSTALL_DIR = process.env.INSTALL_DIR || DEFAULT_INSTALL_DIR;
 
-// Check if running as global install
-const isGlobalInstall = !__dirname.includes('node_modules') || process.env.NODE_ENV === 'production';
-
-if (!isGlobalInstall) {
-  console.log('ℹ️  Local install detected - skipping global MCP configuration');
-  console.log('   Run "npm install -g recursion-mcp" to enable auto-configuration\n');
-  process.exit(0);
+// Helper to run commands
+function run(cmd, cwd = null) {
+  console.log(`  $ ${cmd}`);
+  return execSync(cmd, { cwd, stdio: 'inherit' });
 }
 
-console.log('📦 Global install detected - configuring MCP servers...\n');
-
-// Configuration templates
-const v1Config = {
-  mcpServers: {
-    recursion: {
-      command: 'node',
-      args: [cliPath]
-    }
+// Step 1: Clone repository
+function cloneRepo() {
+  console.log('\n📦 Step 1: Cloning repository...');
+  
+  if (fs.existsSync(INSTALL_DIR)) {
+    console.log(`   Directory exists at ${INSTALL_DIR}`);
+    console.log('   Pulling latest changes...');
+    run('git pull', INSTALL_DIR);
+  } else {
+    console.log(`   Cloning to ${INSTALL_DIR}...`);
+    fs.mkdirSync(path.dirname(INSTALL_DIR), { recursive: true });
+    run(`git clone "${REPO_URL}" "${INSTALL_DIR}"`);
   }
-};
+}
 
-const v2Config = {
-  mcpServers: {
-    'recursion-v2': {
-      command: 'npx',
-      args: ['recursion-mcp-v2']
-    }
+// Step 2: Install dependencies
+function installDeps() {
+  console.log('\n📦 Step 2: Installing dependencies...');
+  run('npm install', INSTALL_DIR);
+}
+
+// Step 3: Build TypeScript
+function build() {
+  console.log('\n🔨 Step 3: Building TypeScript...');
+  run('npm run build', INSTALL_DIR);
+}
+
+// Step 4: Auto-configure MCP
+function configureMCP() {
+  console.log('\n⚙️  Step 4: Configuring MCP for detected IDEs...\n');
+  
+  const cliPath = path.join(INSTALL_DIR, 'dist', 'cli-v2.js');
+  
+  if (!fs.existsSync(cliPath)) {
+    console.error('❌ Build output not found at:', cliPath);
+    process.exit(1);
   }
-};
-
-const combinedConfig = {
-  mcpServers: {
-    ...v1Config.mcpServers,
-    ...v2Config.mcpServers
-  }
-};
-
-// Helper to merge configs
-function mergeConfig(existing, newConfig) {
-  return {
+  
+  const mcpConfig = {
     mcpServers: {
-      ...existing.mcpServers,
-      ...newConfig.mcpServers
+      'recursion-v2': {
+        command: 'node',
+        args: [cliPath]
+      }
     }
   };
+  
+  // Setup Windsurf
+  setupWindsurf(mcpConfig);
+  
+  // Setup Claude Desktop
+  setupClaudeDesktop(cliPath);
+  
+  // Setup Cursor
+  setupCursor(mcpConfig);
+  
+  // Setup VSCode
+  setupVSCode(cliPath);
 }
 
-// Setup Windsurf
-function setupWindsurf() {
+function setupWindsurf(config) {
   try {
     const windsurfDir = path.join(os.homedir(), '.codeium', 'windsurf');
     const configPath = path.join(windsurfDir, 'mcp_config.json');
@@ -81,7 +109,13 @@ function setupWindsurf() {
       existingConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     }
 
-    const newConfig = mergeConfig(existingConfig, combinedConfig);
+    const newConfig = {
+      mcpServers: {
+        ...existingConfig.mcpServers,
+        ...config.mcpServers
+      }
+    };
+    
     fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
     console.log('✅ Windsurf MCP configured');
     console.log(`   Config: ${configPath}`);
@@ -90,8 +124,7 @@ function setupWindsurf() {
   }
 }
 
-// Setup Claude Desktop
-function setupClaudeDesktop() {
+function setupClaudeDesktop(cliPath) {
   try {
     const configDir = isWindows 
       ? path.join(os.homedir(), 'AppData', 'Roaming', 'Claude')
@@ -109,18 +142,13 @@ function setupClaudeDesktop() {
       existingConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     }
 
-    // Claude uses a different format
     const claudeConfig = {
       ...existingConfig,
       mcpServers: {
         ...(existingConfig.mcpServers || {}),
-        recursion: {
+        'recursion-v2': {
           command: 'node',
           args: [cliPath]
-        },
-        'recursion-v2': {
-          command: 'npx',
-          args: ['recursion-mcp-v2']
         }
       }
     };
@@ -133,8 +161,7 @@ function setupClaudeDesktop() {
   }
 }
 
-// Setup Cursor
-function setupCursor() {
+function setupCursor(config) {
   try {
     const cursorDir = isWindows
       ? path.join(os.homedir(), 'AppData', 'Roaming', 'Cursor')
@@ -152,7 +179,13 @@ function setupCursor() {
       existingConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     }
 
-    const newConfig = mergeConfig(existingConfig, combinedConfig);
+    const newConfig = {
+      mcpServers: {
+        ...existingConfig.mcpServers,
+        ...config.mcpServers
+      }
+    };
+    
     fs.writeFileSync(configPath, JSON.stringify(newConfig, null, 2));
     console.log('✅ Cursor MCP configured');
     console.log(`   Config: ${configPath}`);
@@ -161,8 +194,7 @@ function setupCursor() {
   }
 }
 
-// Setup VSCode with MCP extension
-function setupVSCode() {
+function setupVSCode(cliPath) {
   try {
     const vscodeDir = isWindows
       ? path.join(os.homedir(), 'AppData', 'Roaming', 'Code', 'User')
@@ -180,20 +212,14 @@ function setupVSCode() {
       existingConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     }
 
-    // VSCode MCP extension format
     const vscodeConfig = {
       ...existingConfig,
       'mcp.servers': {
         ...(existingConfig['mcp.servers'] || {}),
-        recursion: {
+        'recursion-v2': {
           type: 'stdio',
           command: 'node',
           args: [cliPath]
-        },
-        'recursion-v2': {
-          type: 'stdio',
-          command: 'npx',
-          args: ['recursion-mcp-v2']
         }
       }
     };
@@ -207,17 +233,27 @@ function setupVSCode() {
   }
 }
 
-// Main setup
-console.log('Configuring MCP for detected IDEs...\n');
+// Main
+async function main() {
+  try {
+    cloneRepo();
+    installDeps();
+    build();
+    configureMCP();
+    
+    console.log('\n🎉 Installation complete!');
+    console.log(`\n📁 Installed to: ${INSTALL_DIR}`);
+    console.log('\n📝 Next steps:');
+    console.log('   1. Restart your IDE if it was running');
+    console.log('   2. Check the MCP/tools panel in your IDE');
+    console.log('   3. Available tools: ingest_document_v2, get_document_structure, read_section, etc.');
+    console.log('\n🗑️  To uninstall: just delete the folder and remove the MCP config entries');
+    console.log(`   rm -rf "${INSTALL_DIR}"`);
+    
+  } catch (error) {
+    console.error('\n❌ Installation failed:', error.message);
+    process.exit(1);
+  }
+}
 
-setupWindsurf();
-setupClaudeDesktop();
-setupCursor();
-setupVSCode();
-
-console.log('\n🎉 MCP configuration complete!');
-console.log('\nNext steps:');
-console.log('1. Restart your IDE if it was running');
-console.log('2. Check the MCP/tools panel in your IDE');
-console.log('3. Available tools: ingest_document, ask_documents, rlm_analyze, ingest_document_v2, etc.\n');
-console.log('To manually configure, see README.md');
+main();

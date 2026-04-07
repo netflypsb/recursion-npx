@@ -3,6 +3,30 @@
 [![npm version](https://img.shields.io/npm/v/recursion-mcp-v2)](https://www.npmjs.com/package/recursion-mcp-v2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## What It Does
+
+Recursion MCP V2 is a **document analysis server** that enables AI agents to perform **complete, systematic analysis** of documents. Unlike traditional RAG systems that miss content through chunking, this server converts documents to structured markdown and lets AI agents navigate hierarchically through any section, chapter, or line range.
+
+## How It Works
+
+1. **Document Ingestion**: Converts PDF, DOCX, XLSX, TXT, MD files to structured markdown with hierarchical navigation
+2. **Structure Extraction**: Automatically identifies chapters, sections, and subsections
+3. **Agent Navigation**: AI agents can read any specific section, search for content, and save analysis results
+4. **Persistent Storage**: All analyses are saved incrementally for building complete document understanding
+
+## Use Cases
+
+- **Complete Book Reviews**: Systematic chapter-by-chapter analysis
+- **Legal Document Analysis**: Thorough contract and policy review
+- **Research Paper Processing**: Deep analysis of academic papers
+- **Technical Documentation Review**: Comprehensive API and manual analysis
+- **Business Document Processing**: Complete analysis of reports and proposals
+- **Code Documentation Analysis**: Systematic review of code documentation
+
+**Key Advantage**: Works completely offline with no external APIs - perfect for sensitive documents and secure environments.
+
+---
+
 An NPX-installable MCP (Model Context Protocol) server for **navigation-enabled recursive document analysis**. Works entirely offline with no external APIs required.
 
 ## Features
@@ -29,7 +53,93 @@ npm install -g recursion-mcp-v2
 recursion-mcp-v2
 ```
 
-## Terminal Commands
+## Install from GitHub (Local Clone)
+
+For users who prefer to install directly from GitHub or want to modify the source:
+
+### One-Line Auto-Install (Recommended for GitHub)
+
+Copy and paste this entire block to your AI agent - it handles everything:
+
+```bash
+# Clone, build, and auto-configure Recursion MCP V2
+curl -fsSL https://raw.githubusercontent.com/netflypsb/recursion-npx-v2/main/install-github.js | node
+```
+
+Or download and run manually:
+
+```bash
+# Download the install script
+curl -fsSL -o install-github.js https://raw.githubusercontent.com/netflypsb/recursion-npx-v2/main/install-github.js
+node install-github.js
+```
+
+**What this does:**
+1. Clones the repo to `~/.local/share/recursion-mcp-v2`
+2. Installs npm dependencies
+3. Builds the TypeScript
+4. Auto-detects your IDE (Windsurf, Claude, Cursor, VSCode) and configures MCP
+
+**Windows PowerShell:**
+```powershell
+# Download and run
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/netflypsb/recursion-npx-v2/main/install-github.js" -OutFile "install-github.js"
+node install-github.js
+```
+
+### Manual One-Liner Script
+
+If you prefer manual control over each step:
+
+```bash
+# Clone and install Recursion MCP V2 from GitHub
+REPO_URL="https://github.com/netflypsb/recursion-npx-v2.git" \
+INSTALL_DIR="$HOME/.local/share/recursion-mcp-v2" \
+&& rm -rf "$INSTALL_DIR" \
+&& git clone "$REPO_URL" "$INSTALL_DIR" \
+&& cd "$INSTALL_DIR" \
+&& npm install \
+&& npm run build \
+&& echo "✅ Recursion MCP V2 installed to $INSTALL_DIR"
+```
+
+Then add to your MCP config:
+
+**Windsurf:** `~/.codeium/windsurf/mcp_config.json`
+**Claude Desktop:** `~/AppData/Roaming/Claude/settings.json` (Windows) or `~/Library/Application Support/Claude/settings.json` (Mac)
+**Cursor:** `~/.cursor/mcp.json` (Mac) or `~/AppData/Roaming/Cursor/mcp.json` (Windows)
+
+```json
+{
+  "mcpServers": {
+    "recursion-v2": {
+      "command": "node",
+      "args": ["C:/Users/YOUR_USERNAME/.local/share/recursion-mcp-v2/dist/cli-v2.js"]
+    }
+  }
+}
+```
+
+**Windows users:** Replace `$HOME` with your user path and forward slashes with backslashes in the config.
+
+### Manual GitHub Install Steps
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/netflypsb/recursion-npx-v2.git recursion-mcp-v2
+cd recursion-mcp-v2
+
+# 2. Install dependencies
+npm install
+
+# 3. Build the TypeScript
+npm run build
+
+# 4. Get the absolute path to the built CLI
+node -e "console.log(require('path').resolve('dist/cli-v2.js'))"
+```
+
+Then manually add the output path to your IDE's MCP configuration.
 
 ### Package Management
 
